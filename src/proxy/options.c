@@ -124,6 +124,7 @@ options_usage(void)
     const struct option *options = getopt_long_options;
 
     options_version();
+    puts("\nUsage: dnscrypt-proxy <config file> | [<option>, ...]\n");
     puts("\nOptions:\n");
     do {
         if (options->val < 256) {
@@ -270,7 +271,7 @@ options_parse_candidate(ProxyContext * const proxy_context,
     }
     resolver_ip = options_get_col(headers, headers_count,
                                   cols, cols_count, "Resolver address");
-    if (*resolver_ip == '[') {
+    if (resolver_ip == NULL || *resolver_ip == '[') {
         return 0;
     }
     (*candidate_count_p)++;

@@ -1,14 +1,14 @@
 ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = \
-	DNSCRYPT-V2-PROTOCOL.txt \
-	README-iOS.markdown \
 	README-PLUGINS.markdown \
 	README-WINDOWS.markdown \
+	README-iOS.markdown \
 	README.markdown \
 	THANKS \
 	apparmor.profile.dnscrypt-proxy \
 	autogen.sh \
+	dnscrypt-protocol/DNSCRYPT-V2-PROTOCOL.txt \
 	dnscrypt-proxy.conf \
 	dnscrypt-proxy.service.in \
 	dnscrypt-proxy.socket \
@@ -29,8 +29,10 @@ SUBDIRS += \
 	test
 
 dist_pkgdata_DATA = \
-	dnscrypt-resolvers.csv \
-	minisign.pub
+	dnscrypt-resolvers/v1/dnscrypt-resolvers.csv \
+	dnscrypt-resolvers/v1/dnscrypt-resolvers.csv.minisig \
+	dnscrypt-resolvers/v1/dnscrypt-resolvers.csv.sig \
+	dnscrypt-resolvers/v1/minisign.pub
 
 doc_DATA = \
 	README.markdown \
@@ -55,13 +57,13 @@ dnscrypt-proxy.service: dnscrypt-proxy.service.in
 	$(SED) \
 	-e 's|[@]sbindir@|$(sbindir)|g' \
 	-e 's|[@]sysconfdir@|$(sysconfdir)|g' \
-	< dnscrypt-proxy.service.in > dnscrypt-proxy.service
+	< $< > $@
 
 org.dnscrypt.osx.DNSCryptProxy.plist: org.dnscrypt.osx.DNSCryptProxy.plist.in
 	$(SED) \
 	-e 's|[@]sbindir@|$(sbindir)|g' \
 	-e 's|[@]sysconfdir@|$(sysconfdir)|g' \
-	< org.dnscrypt.osx.DNSCryptProxy.plist.in > org.dnscrypt.osx.DNSCryptProxy.plist
+	< $< > $@
 
 CLEANFILES = \
 	dnscrypt-proxy.service \
@@ -85,5 +87,5 @@ uninstall-local:
 	@if cmp -s $(srcdir)/dnscrypt-proxy.conf $(DESTDIR)$(sysconfdir)/dnscrypt-proxy.conf; then \
 		echo "$(DESTDIR)$(sysconfdir)/dnscrypt-proxy.conf has not changed and will be removed."; \
 		rm -f $(DESTDIR)$(sysconfdir)/dnscrypt-proxy.conf; \
-        rmdir $(DESTDIR)$(sysconfdir) 2> /dev/null ||:; \
+		rmdir $(DESTDIR)$(sysconfdir) 2> /dev/null ||:; \
 	fi
